@@ -14,6 +14,9 @@ var CreateClient = function (socket) {
 var names= new Array();
 
 var server = net.createServer(function (socket){
+    
+    socket.setTimeout(0);
+    socket.setEncoding("utf8");
     util.log('Got a new connection.');
     var c = new CreateClient(socket);
     //Indexing with Sockets as Keys .
@@ -40,7 +43,24 @@ var server = net.createServer(function (socket){
         allClients[socket]=undefined;
         util.log(allClients[socket].name +' Connection closed with error: ' + hadError);
         // Handle disonnection.
-    });
+        });
+
+    socket.addListener("connect", function () {
+            socket.write("Welcome, enter your username:\n");
+            });
+
+    socket.addListener("data", function (data) {
+            if (client.name == null) {
+            client.name = data.match(/\S+/);
+            socket.write("===========\n");
+            clients.forEach(function(c) {
+                if (c != client) {
+                c.stream.write(client.name + " has joined.\n");
+                }
+                });
+            return;
+            }
+
 
     socket.on('error', function (e) {
         names[allClients[socket].name]=0;
