@@ -26,9 +26,9 @@ var server = net.createServer(function (socket){
 
 
 
-    //Attaching listeners to socket. 
+//Attaching listeners to socket. 
 /*
-    socket.on('close', function (hadError) {
+    socket.addListener('close', function (hadError) {
         // Handling disonnection.
         util.log(allClients[c].name +' Connection closed with error: ' + hadError);
         names.remove(c.name);
@@ -56,7 +56,7 @@ var server = net.createServer(function (socket){
             {
             allClients.forEach(function(cl) {
                     if (cl != c) {
-                    cl.socket.write(c.name + ": " + data);
+                    cl.socket.write(c.name + " : " + data);
                     };
                     });
             }
@@ -71,11 +71,12 @@ var server = net.createServer(function (socket){
             names.remove(c.name) ;   
             socket.end();
             });
-/*
-    socket.on('error', function (e) {
+
+
+    socket.addListener('error', function (e) {
               socket.end();
     });
-*/
+
 });
 
 // listening to requests at port 5000
