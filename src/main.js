@@ -3,85 +3,82 @@ var util = require('util');
 
 var allClients = new Array ();
 
+Array.prototype.remove = function(e) {
+  for (var i = 0; i < this.length; i++) {
+      if (e == this[i]) { return this.splice(i, 1); }
+        }
+        };
+
 var CreateClient = function (socket) {
-  //  this.socket = socket;
+    this.socket = socket;
     this.name = null;
-    this.with= new Array ();
 };
 
 //list of names in use for faster search indexed by name with value=1 if in use else undefined or 0;
-
 var names= new Array();
 
 var server = net.createServer(function (socket){
-    
+
     socket.setTimeout(0);
     socket.setEncoding("utf8");
     util.log('Got a new connection.');
     var c = new CreateClient(socket);
-    //Indexing with Sockets as Keys .
-    allClients[socket]=c;
-    console.log(allClients[socket]);
-    console.log(allClients);
-    //Attaching listeners to socket.
-    socket.on('data', function (data) {
-        util.log('Data received: ' + data);
-        //Handle data
-        if(allClients[socket].name==null)
-            {
-            if(names[data]==1){
-                socket.write('Name Already in use');}
-            else{
-                names[data]=1;
-                }
-            }
 
-        });
 
+
+    //Attaching listeners to socket. 
+/*
     socket.on('close', function (hadError) {
-        names[allClients[socket]]=0;
-        allClients[socket]=undefined;
-        util.log(allClients[socket].name +' Connection closed with error: ' + hadError);
-        // Handle disonnection.
+        // Handling disonnection.
+        util.log(allClients[c].name +' Connection closed with error: ' + hadError);
+        names.remove(c.name);
+        allClients.remove(c);
         });
-
+*/
     socket.addListener("connect", function () {
-            socket.write("Welcome, enter your username:\n");
+            socket.write("Please type in username:\n");
             });
 
     socket.addListener("data", function (data) {
-            if (client.name == null) {
-            client.name = data.match(/\S+/);
-            socket.write("===========\n");
-            clients.forEach(function(c) {
-                if (c != client) {
-                c.stream.write(client.name + " has joined.\n");
-                }
-                });
-            return;
+            console.log(data)
+            // Getting User Name .
+            if(c.name==null)
+            {
+             if(data in names){
+                 socket.write('Name Already in use , Choose another name');}
+             else{
+                 names.push(data);
+                 c.name=data;
+                 allClients.push(c);
+                 }
             }
-
-
-    socket.on('error', function (e) {
-        names[allClients[socket].name]=0;
-        allClients[socket]=undefined;
-        util.log('Error: ' + e);
-        if (e.code == 'EADDRINUSE') {
-        console.log('Address in use, retrying...');
-        setTimeout(function () {
-            server.close();
-            server.listen(PORT, HOST);
-            }, 1000);
-    // Explicitly close the socket.
-    //else {
-    //          socket.end();
-    //      }
-    }
+            else
+            {
+            allClients.forEach(function(cl) {
+                    if (cl != c) {
+                    cl.socket.write(c.name + ": " + data);
+                    };
+                    });
+            }
     });
+
+
+    socket.addListener("end", function() {
+            allClients.remove(c);
+            allClients.forEach(function(cl) {
+                cl.socket.write(c.name + " has left.\n");
+                });
+            names.remove(c.name) ;   
+            socket.end();
+            });
+/*
+    socket.on('error', function (e) {
+              socket.end();
+    });
+*/
 });
 
 // listening to requests at port 5000
-
 server.listen(5000,function(){
     util.log('server bound');
-})
+});
