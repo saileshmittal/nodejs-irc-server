@@ -33,7 +33,7 @@ var server = net.createServer( function (socket){
         });
 
         socket.addListener('connect', function () {
-            socket.write('MESSAGE:Please type in username:\n');
+            socket.write('MESSAGE:Please type in username:\r\n');
         });
 
         socket.addListener('data', function (data) {
@@ -55,9 +55,9 @@ var server = net.createServer( function (socket){
                 if(flag1==0){;//do nothing
                 }
                 else if(data.length==0){
-                    socket.write('ERROR: Please Follow Protocol\r\n');
+                    socket.write('ERROR: Empty name ,Please Follow Protocol\r\n');
                     socket.end();
-               }
+                }
                 else if(fields.length>2){
                     socket.write('ERROR: Please Follow Protocol\r\n');
                     socket.end();
