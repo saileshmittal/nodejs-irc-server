@@ -33,7 +33,7 @@ var server = net.createServer( function (socket){
         });
 
         socket.addListener('connect', function () {
-            socket.write('Please type in username:\n');
+            socket.write('MESSAGE:Please type in username:\n');
         });
 
         socket.addListener('data', function (data) {
@@ -55,13 +55,17 @@ var server = net.createServer( function (socket){
                 if(flag1==0){;//do nothing
                 }
                 else if(data.length==0){
-                    socket.write('Please Follow Protocol\r\n');}
+                    socket.write('ERROR: Please Follow Protocol\r\n');
+                    socket.end();
+               }
                 else if(fields.length>2){
-                    socket.write('Please Follow Protocol\r\n');}
+                    socket.write('ERROR: Please Follow Protocol\r\n');
+                    socket.end();
+                }
                 else if(flag){
-                    socket.write('Name Already in use , Choose another name\r\n');}
+                    socket.write('ERROR: Name Already in use , Choose another name\r\n');}
                 else{
-                    socket.write('You Are Now connected\n');
+                    socket.write('CONNECTED: '+data+'\r\n'+'MESSAGE: You Are Now connected\r\n');
                     names.push(data);
                     connection.name=data;
                     allClients.push(connection);}
@@ -72,7 +76,7 @@ var server = net.createServer( function (socket){
                     allClients.forEach( function (allconnections) {
                         data=fields[i];
                         if (allconnections != connection) {
-                            allconnections.socket.write(connection.name + " : " + data);
+                            allconnections.socket.write('MESSAGE: '+connection.name + " : " + data);
                         };
                     })
                 };
@@ -82,7 +86,7 @@ var server = net.createServer( function (socket){
         socket.addListener('end', function () {
             allClients.remove(connection);
             allClients.forEach(function (allconnections) {
-                allconnections.socket.write(connection.name + ' has left.\n');
+                allconnections.socket.write('MESSAGE: '+connection.name + ' has left.\n');
                 });
             names.remove(connection.name) ;   
             socket.end();
