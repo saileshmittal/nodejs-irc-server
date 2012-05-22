@@ -30,11 +30,11 @@ var server = net.createServer(function (socket){
             util.log(connection.name +' Connection closed with error: ' + hadError);
             names.remove(connection.name);
             allClients.remove(connection);
-            });
+        });
 
         socket.addListener("connect", function () {
             socket.write("Please type in username:\n");
-            });
+        });
 
         socket.addListener("data", function (data) {
             // Getting User Name .
@@ -49,7 +49,7 @@ var server = net.createServer(function (socket){
                     if(data==names[i]){
                         flag=1;
                         break;}
-                    }
+                };
 
                 if(data.length==0){
                     socket.write('Please Follow Protocol\r\n');}
@@ -61,8 +61,7 @@ var server = net.createServer(function (socket){
                     names.push(data);
                     connection.name=data;
                     allClients.push(connection);}
-
-                }
+            }
             else{
                 fields = data.split(/MESSAGE:/);
                 for(var i=1;i<fields.length;i++){
@@ -70,11 +69,11 @@ var server = net.createServer(function (socket){
                         data=fields[i];
                         if (allconnections != connection) {
                             allconnections.socket.write(connection.name + " : " + data);
-                            };
-                        })
-                    };
-                }
-            });
+                        };
+                    })
+                };
+            }
+        });
 
         socket.addListener("end", function () {
             allClients.remove(connection);
@@ -83,12 +82,12 @@ var server = net.createServer(function (socket){
                 });
             names.remove(connection.name) ;   
             socket.end();
-            });
+        });
 
 
         socket.addListener('error', function (e) {
             socket.end();
-            });
+        });
 });
 
 // listening to requests at port 5000
