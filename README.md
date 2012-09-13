@@ -8,3 +8,5 @@ Collaborators:
 * Sailesh Mittal (Me)
 
 This is an attempt to learn node.js by making a simple version of IRC server.
+
+Now Creating different Rooms to chat .
